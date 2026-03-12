@@ -16,4 +16,4 @@ git pull origin main  # Assume main branch; adjust if needed
 # Re-run install to refresh symlinks (in case structure changed)
 ./install.sh "$PLATFORM"
 
-echo "Update complete for $DISPLAY_NAME!"
+echo "Update complete for $PLATFORM!"
