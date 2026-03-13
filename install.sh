@@ -197,12 +197,12 @@ if [ -d "$RULES_SRC" ]; then
           name=$(basename "$rf" .md)
           start_marker="<!-- jg-ai-rule: $name -->"
           end_marker="<!-- /jg-ai-rule: $name -->"
-          content=$(sed '/^---$/,/^---$/d' "$rf")
+          content=$(awk 'NR==1 && /^---$/{in_fm=1; next} in_fm && /^---$/{in_fm=0; next} !in_fm' "$rf")
 
           echo -n "  $name ... "
           if [ -f "$claude_md" ] && grep -qF "$start_marker" "$claude_md" 2>/dev/null; then
             # Replace existing block between markers
-            sed -i'' "/$start_marker/,/$end_marker/c\\
+            sed -i '' "/$start_marker/,/$end_marker/c\\
 $start_marker\\
 $content\\
 $end_marker" "$claude_md"
