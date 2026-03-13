@@ -154,7 +154,7 @@ if [ -d "$WORK_LOG_SRC" ]; then
 fi
 
 # ====================
-# Rules: prompt to install into Cursor and/or Claude Code
+# Rules: install for the selected platform
 # ====================
 RULES_SRC="$REPO_DIR/rules"
 
@@ -162,55 +162,64 @@ if [ -d "$RULES_SRC" ]; then
   rule_files=("$RULES_SRC"/*.md)
   if [ ${#rule_files[@]} -gt 0 ]; then
     echo "============================================================="
-    echo "This repo includes always-on agent rules:"
+    echo "Installing always-on agent rules for $DISPLAY_NAME:"
     for rf in "${rule_files[@]}"; do
       echo "  • $(basename "$rf" .md)"
     done
     echo ""
 
-    # --- Cursor ---
-    echo -n "Install rules into ~/.cursor/rules/ (for Cursor)? [y/N] "
-    read -r cursor_answer
-    if [[ "$cursor_answer" =~ ^[Yy]$ ]]; then
-      mkdir -p "$HOME/.cursor/rules"
-      for rf in "${rule_files[@]}"; do
-        name=$(basename "$rf" .md)
-        target="$HOME/.cursor/rules/${name}.mdc"
-        echo -n "  ${name}.mdc ... "
-        if [ -e "$target" ]; then
-          echo "[skip] already exists"
-        else
-          cp "$rf" "$target"
-          echo "[created]"
-        fi
-      done
+    if [[ "$PLATFORM" == "cursor" ]]; then
+      echo -n "Install rules into ~/.cursor/rules/? [y/N] "
+      read -r answer
+      if [[ "$answer" =~ ^[Yy]$ ]]; then
+        mkdir -p "$HOME/.cursor/rules"
+        for rf in "${rule_files[@]}"; do
+          name=$(basename "$rf" .md)
+          target="$HOME/.cursor/rules/${name}.mdc"
+          echo -n "  ${name}.mdc ... "
+          if [ -e "$target" ]; then
+            echo "[skip] already exists"
+          else
+            cp "$rf" "$target"
+            echo "[created]"
+          fi
+        done
+      else
+        echo "  Skipped rules."
+      fi
     else
-      echo "  Skipped Cursor rules."
-    fi
-    echo ""
+      echo -n "Append rules to ~/.claude/CLAUDE.md? [y/N] "
+      read -r answer
+      if [[ "$answer" =~ ^[Yy]$ ]]; then
+        claude_md="$HOME/.claude/CLAUDE.md"
+        mkdir -p "$HOME/.claude"
+        for rf in "${rule_files[@]}"; do
+          name=$(basename "$rf" .md)
+          start_marker="<!-- jg-ai-rule: $name -->"
+          end_marker="<!-- /jg-ai-rule: $name -->"
+          content=$(awk 'NR==1 && /^---$/{in_fm=1; next} in_fm && /^---$/{in_fm=0; next} !in_fm' "$rf")
 
-    # --- Claude Code ---
-    echo -n "Append rules to ~/.claude/CLAUDE.md (for Claude Code)? [y/N] "
-    read -r claude_answer
-    if [[ "$claude_answer" =~ ^[Yy]$ ]]; then
-      claude_md="$HOME/.claude/CLAUDE.md"
-      mkdir -p "$HOME/.claude"
-      for rf in "${rule_files[@]}"; do
-        name=$(basename "$rf" .md)
-        # Strip YAML frontmatter before appending
-        content=$(sed '/^---$/,/^---$/d' "$rf")
-        if [ -f "$claude_md" ] && grep -qF "$(head -1 <<< "$content")" "$claude_md" 2>/dev/null; then
-          echo "  $name ... [skip] already present in CLAUDE.md"
-        else
-          {
-            [ -s "$claude_md" ] && echo ""
-            echo "$content"
-          } >> "$claude_md"
-          echo "  $name ... [appended]"
-        fi
-      done
-    else
-      echo "  Skipped Claude Code rules."
+          echo -n "  $name ... "
+          if [ -f "$claude_md" ] && grep -qF "$start_marker" "$claude_md" 2>/dev/null; then
+            # Replace existing block between markers
+            sed -i '' "/$start_marker/,/$end_marker/c\\
+$start_marker\\
+$content\\
+$end_marker" "$claude_md"
+            echo "[updated]"
+          else
+            {
+              [ -s "$claude_md" ] && echo ""
+              echo "$start_marker"
+              echo "$content"
+              echo "$end_marker"
+            } >> "$claude_md"
+            echo "[appended]"
+          fi
+        done
+      else
+        echo "  Skipped rules."
+      fi
     fi
     echo ""
   fi
