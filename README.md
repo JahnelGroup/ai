@@ -44,7 +44,7 @@ A lightweight daily logging system. Both the `work-log` rule and `write-time-ent
 This will:
 - Symlink each skill from `skills/` into the appropriate target directory
 - Create `~/.config/work-log/` and seed it with `STYLE.md` and `README.md` from the example files (skips any that already exist)
-- Offer to install rules into `~/.cursor/rules/` and/or `~/.claude/CLAUDE.md`
+- Install rules into `~/.cursor/rules/` (Cursor) or `~/.claude/CLAUDE.md` (Claude Code)
 
 Change `STYLE.md` to match your preferred time entry formatting and verbosity.
 
