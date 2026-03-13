@@ -2,7 +2,8 @@
 
 # =============================================================================
 # install.sh - Cross-platform installer for shared AI agent configs
-# Symlinks each skill from repo/skills/ to ~/.claude/skills/<skill-name>/
+# Usage: ./install.sh <cursor|claude>
+# Symlinks each skill from repo/skills/ to the appropriate target directory
 # Bootstraps ~/.config/work-log/ from example files
 # Non-destructive: skips conflicts, preserves existing files
 # =============================================================================
@@ -10,11 +11,37 @@
 set -euo pipefail
 
 # ====================
+# Parameter validation
+# ====================
+PLATFORM="${1:-}"
+
+if [[ -z "$PLATFORM" ]]; then
+  echo "Error: You must specify a platform."
+  echo "Usage: ./install.sh <cursor|claude>"
+  exit 1
+fi
+
+case "$PLATFORM" in
+  cursor)
+    TARGET_DIR="$HOME/.cursor/skills"
+    DISPLAY_NAME="Cursor"
+    ;;
+  claude)
+    TARGET_DIR="$HOME/.claude/skills"
+    DISPLAY_NAME="Claude Code"
+    ;;
+  *)
+    echo "Error: Invalid platform '$PLATFORM'."
+    echo "Usage: ./install.sh <cursor|claude>"
+    exit 1
+    ;;
+esac
+
+# ====================
 # Configuration
 # ====================
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 SHARED_SKILLS_DIR="$REPO_DIR/skills"
-TARGET_DIR="$HOME/.claude/skills"
 
 if [ ! -d "$SHARED_SKILLS_DIR" ]; then
   echo "Error: No 'skills/' directory found in repo root."
@@ -25,13 +52,13 @@ fi
 mkdir -p "$TARGET_DIR"
 
 echo "============================================================="
-echo "Shared Claude Skills Installer (cross-platform)"
+echo "Shared $DISPLAY_NAME Skills Installer (cross-platform)"
 echo "Repo:          $REPO_DIR"
 echo "Shared skills: $SHARED_SKILLS_DIR"
 echo "Target dir:    $TARGET_DIR"
 echo "============================================================="
 echo "This will symlink individual skills to top-level $TARGET_DIR/"
-echo "(Claude Code requires top-level skill folders; nested ones are ignored)"
+echo "($DISPLAY_NAME requires top-level skill folders; nested ones are ignored)"
 echo ""
 
 # ====================
@@ -190,19 +217,17 @@ if [ -d "$RULES_SRC" ]; then
 fi
 
 echo "============================================================="
-echo "Installation/update complete!"
+echo "Installation complete for $DISPLAY_NAME!"
 echo ""
 echo "Next steps:"
-echo "  1. Restart Claude Code session (or reload skills if supported)"
-echo "  2. Test: Ask Claude '/skills' or 'list available skills'"
-echo "     → You should see your shared skills listed"
+echo "  1. Restart your $DISPLAY_NAME session (or reload skills if supported)"
+echo "  2. Verify skills are available in $DISPLAY_NAME"
 echo ""
 echo "To update later:"
-echo "  cd $REPO_DIR && git pull && ./install.sh"
+echo "  cd $REPO_DIR && ./update.sh $PLATFORM"
 echo ""
 echo "Notes:"
 echo "  • Existing local skills in $TARGET_DIR are untouched"
 echo "  • If name conflicts occur, rename in repo or remove local one"
 echo "  • Windows: First run may need elevated Git Bash/PowerShell"
-echo "  • Recursive/nested discovery is NOT supported yet (open Anthropic issues #18192, #20755, etc.)"
 echo "============================================================="

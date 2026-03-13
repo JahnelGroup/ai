@@ -25,29 +25,34 @@ Always-on rules that shape agent behavior across every session.
 
 A lightweight daily logging system. Both the `work-log` rule and `write-time-entry` skill feed into the same set of daily log files at `~/.config/work-log/YYYY-MM-DD.md`. The install script bootstraps this directory with sensible defaults from the `.example` files — your customizations are never overwritten.
 
-## Setup
+## Installation
 
 1. Clone the repo:
 
-   ```sh
+   ```bash
    git clone git@github.com:JahnelGroup/ai.git
    cd ai
    ```
 
-2. Run the install script:
+2. Run the install script for your platform:
 
-   ```sh
-   ./install.sh
+   ```bash
+   ./install.sh cursor   # symlinks skills to ~/.cursor/skills/
+   ./install.sh claude    # symlinks skills to ~/.claude/skills/
    ```
 
 This will:
-- Symlink each skill from `skills/` into `~/.claude/skills/`
+- Symlink each skill from `skills/` into the appropriate target directory
 - Create `~/.config/work-log/` and seed it with `STYLE.md` and `README.md` from the example files (skips any that already exist)
+- Offer to install rules into `~/.cursor/rules/` and/or `~/.claude/CLAUDE.md`
 
 Change `STYLE.md` to match your preferred time entry formatting and verbosity.
 
 ## Updating
 
-```sh
-git pull && ./install.sh
+Pulls the latest changes from main and refreshes symlinks:
+
+```bash
+./update.sh cursor
+./update.sh claude
 ```
