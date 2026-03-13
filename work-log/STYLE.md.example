@@ -1,0 +1,11 @@
+The work log at `~/.config/work-log/YYYY-MM-DD.md` is a single running comma-separated list of concise work phrases. No timestamps, no bullet points, no markdown headers.
+
+Each phrase is usually less than 10 words. If a ticket number is known (from branch name, commit messages, or user context), group related sub-tasks in parentheses after the ticket number.
+
+Do not duplicate — if the same work is already in the file, skip it. Combine closely related changes for the same ticket/effort into one parenthetical group rather than separate phrases.
+
+Examples:
+- STM-4784 (updated transaction aggregates, added unit tests)
+- fixed Fivetran sync issue
+- code review for other devs
+- helped marketing with Hightouch audience questions

@@ -1,0 +1,14 @@
+# Work Log
+
+Daily work logs live here as `YYYY-MM-DD.md` files. Each file is a single comma-separated line of concise work phrases, suitable for copying into a time entry.
+
+## How entries get written
+
+Two sources append to today's file automatically:
+
+1. **Agent post-hook** (Cursor: `~/.cursor/rules/work-log.mdc`, Claude Code: `~/.claude/CLAUDE.md`) — after any task that modifies files, the agent appends a phrase describing what it did.
+2. **`/write-time-entry` skill** — inspects recent git commits and appends any work not already captured.
+
+## Customizing the format
+
+Edit [`STYLE.md`](./STYLE.md) to change how entries are phrased, grouped, or structured. Both sources above read from that file, so changes apply everywhere.
