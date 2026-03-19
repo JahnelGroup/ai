@@ -5,11 +5,12 @@ alwaysApply: true
 
 # Work Log Post-Hook
 
-After completing a task that **modifies code** (creates, edits, or deletes files), append a brief phrase to the daily work log.
+After completing a task that **produces artifacts** — whether modifying code (creates, edits, or deletes files) or producing external artifacts (Notion pages, JIRA updates, GitLab MRs, etc.) — append a brief phrase to the daily work log.
 
 ## When to Log
 
-- Only after files are actually modified (not read-only exploration or answering questions)
+- After files are actually modified (not read-only exploration or answering questions)
+- After creating or updating external artifacts via MCP tools (Notion docs, JIRA tickets, GitLab MRs, etc.)
 - One phrase per completed task/request
 - Do not log the act of writing the log entry itself
 
