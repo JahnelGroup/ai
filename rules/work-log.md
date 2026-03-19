@@ -16,6 +16,6 @@ After completing a task that **produces artifacts** — whether modifying code (
 
 ## How to Write the Entry
 
-1. Read `~/.config/work-log/STYLE.md` for formatting rules.
+1. Read `~/.config/work-log/STYLE.md` for formatting rules. If it doesn't exist, create it using work-log/STYLE.md.example.
 2. Read `~/.config/work-log/YYYY-MM-DD.md` (today's date). If it doesn't exist, create it.
 3. Append the new phrase to the end, separated by a comma and space.
